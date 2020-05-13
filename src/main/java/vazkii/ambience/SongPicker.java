@@ -199,7 +199,8 @@ public final class SongPicker {
 
 		while(!dimensions.isEmpty()){
 			int dim = dimensions.remove();
-			return dimensionMap.get(dim);
+			if(dim == indimension)
+				return dimensionMap.get(dim);
 		}
 
 		Entity riding = player.getRidingEntity();
