@@ -1,0 +1,25 @@
+[20:04:51] [main/INFO]: Setting user: Player187
+[20:04:54] [main/WARN]: Skipping bad option: lastServer:
+[20:04:54] [main/INFO]: LWJGL Version: 2.9.4
+[20:04:58] [main/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Azzy's Ambience
+[20:05:00] [Sound Library Loader/INFO]: Starting up SoundSystem...
+[20:05:00] [Thread-6/INFO]: Initializing LWJGL OpenAL
+[20:05:00] [Thread-6/INFO]: (The LWJGL binding of OpenAL.  For more information, see http://www.lwjgl.org)
+[20:05:00] [Thread-6/INFO]: OpenAL initialized.
+[20:05:00] [Sound Library Loader/INFO]: Sound engine started
+[20:05:03] [main/INFO]: Created: 16x16 textures-atlas
+[20:05:03] [main/INFO]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Azzy's Ambience
+[20:05:05] [main/INFO]: SoundSystem shutting down...
+[20:05:05] [main/WARN]: Author: Paul Lamb, www.paulscode.com
+[20:05:05] [Sound Library Loader/INFO]: Starting up SoundSystem...
+[20:05:05] [Thread-8/INFO]: Initializing LWJGL OpenAL
+[20:05:05] [Thread-8/INFO]: (The LWJGL binding of OpenAL.  For more information, see http://www.lwjgl.org)
+[20:05:05] [Thread-8/INFO]: OpenAL initialized.
+[20:05:06] [Sound Library Loader/INFO]: Sound engine started
+[20:05:07] [main/INFO]: Created: 512x512 textures-atlas
+[20:05:09] [main/WARN]: Skipping bad option: lastServer:
+[20:05:09] [main/INFO]: Narrator library for x64 successfully loaded
+[20:05:09] [Realms Notification Availability checker #1/INFO]: Could not authorize you against Realms server: Invalid session id
+[20:06:21] [main/INFO]: Stopping!
+[20:06:21] [main/INFO]: SoundSystem shutting down...
+[20:06:22] [main/WARN]: Author: Paul Lamb, www.paulscode.com

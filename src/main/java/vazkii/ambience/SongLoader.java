@@ -34,13 +34,14 @@ public final class SongLoader {
 			
 			if(enabled) {
 				SongPicker.reset();
-				Set<Object> keys = props.keySet();
+				Set<Object> keys = props.keySet(); //Gets all the events
 				for(Object obj : keys) {
 					String s = (String) obj;
 					
-					String[] tokens = s.split("\\.");
+					String[] tokens = s.split("\\."); //Splits them one at a time
 					if(tokens.length < 2)
 						continue;
+
 
 					String keyType = tokens[0];
 					if(keyType.equals("event")) {	
@@ -64,6 +65,12 @@ public final class SongLoader {
 							else SongPicker.secondaryTagMap.put(type, props.getProperty(s).split(","));
 						}
 					}
+					else if(keyType.equals("dimension")){
+					    int dim = Integer.parseInt(tokens[1]);
+
+					    SongPicker.dimensions.add(dim);
+                        SongPicker.dimensionMap.put(dim, props.getProperty(s).split(","));
+                    }
 				}
 			}
 		} catch(Exception e) {

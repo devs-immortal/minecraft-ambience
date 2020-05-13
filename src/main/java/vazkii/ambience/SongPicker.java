@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,6 +23,7 @@ import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.monster.EntityWitherSkeleton;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -52,8 +55,11 @@ public final class SongPicker {
 	public static final String EVENT_RAIN = "rain";
 	public static final String EVENT_UNDERWATER = "underwater";
 	public static final String EVENT_UNDERGROUND = "underground";
+	public static final String EVENT_VOID = "void";
 	public static final String EVENT_DEEP_UNDEGROUND = "deepUnderground";
 	public static final String EVENT_HIGH_UP = "highUp";
+	public static final String EVENT_NETHERFORTRESS = "netherFortress";
+	public static final String EVENT_ENTITY = "entity";
 	public static final String EVENT_VILLAGE = "village";
 	public static final String EVENT_VILLAGE_NIGHT = "villageNight";
 	public static final String EVENT_MINECART = "minecart";
@@ -70,14 +76,22 @@ public final class SongPicker {
 	public static final Map<Biome, String[]> biomeMap = new HashMap();
 	public static final Map<BiomeDictionary.Type, String[]> primaryTagMap = new HashMap();
 	public static final Map<BiomeDictionary.Type, String[]> secondaryTagMap = new HashMap();
+	public static final Map<Integer, String[]> dimensionMap = new HashMap();
+	public static final Queue<Integer> dimensions = new LinkedList<>();
 	
 	public static final Random rand = new Random();
+
+
+	public static boolean inVillage = false;
+	public static boolean inFortress = false;
+	public static boolean underAssault = false;
 	
 	public static void reset() {
 		eventMap.clear();
 		biomeMap.clear();
 		primaryTagMap.clear();
 		secondaryTagMap.clear();
+		dimensionMap.clear();
 	}
 	
 	public static String[] getSongs() {
@@ -132,7 +146,7 @@ public final class SongPicker {
         	if(songs != null)
         		return songs;
         }
-        
+
         float hp = player.getHealth();
         if(hp < 7) {
         	String[] songs = getSongsForEvent(EVENT_DYING);
@@ -140,10 +154,17 @@ public final class SongPicker {
         		return songs;
         }
 
-	        int monsterCount = world.getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(player.posX - 16, player.posY - 8, player.posZ - 16, player.posX + 16, player.posY + 8, player.posZ + 16)).size();
-		if(monsterCount > 5) {
+        int monsterCount = world.getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(player.posX - 16, player.posY - 8, player.posZ - 16, player.posX + 16, player.posY + 8, player.posZ + 16)).size();
+        int witherCount = world.getEntitiesWithinAABB(EntityWitherSkeleton.class, new AxisAlignedBB(player.posX - 64, player.posY - 16, player.posZ - 64, player.posX + 64, player.posY + 16, player.posZ + 64)).size();
+
+        if(underAssault && monsterCount < 2) {
+				underAssault = false;
+        }
+
+		if((monsterCount > 8 && witherCount < 3) || underAssault) {
         	String[] songs = getSongsForEvent(EVENT_HORDE);
         	if(songs != null)
+        		underAssault = true;
         		return songs;
 		}
         
@@ -162,6 +183,11 @@ public final class SongPicker {
         	int indimension = world.provider.getDimension();
 
 		if(indimension == -1) {
+			if(witherCount >= 3) {
+				String[] songs = getSongsForEvent(EVENT_NETHERFORTRESS);
+				if(songs != null)
+					return songs;
+			}
 		String[] songs = getSongsForEvent(EVENT_IN_NETHER);
 	        	if(songs != null)
 	        	return songs;
@@ -169,6 +195,11 @@ public final class SongPicker {
 			String[] songs = getSongsForEvent(EVENT_IN_END);
 	        	if(songs != null)
 	        	return songs;
+		}
+
+		while(!dimensions.isEmpty()){
+			int dim = dimensions.remove();
+			return dimensionMap.get(dim);
 		}
 
 		Entity riding = player.getRidingEntity();
@@ -206,7 +237,20 @@ public final class SongPicker {
 		
 		if(world.provider.isSurfaceWorld()) {
 			boolean underground = !world.canSeeSky(pos);
-			
+
+			int villagerCount = world.getEntitiesWithinAABB(EntityVillager.class, new AxisAlignedBB(player.posX - 30, player.posY - 8, player.posZ - 30, player.posX + 30, player.posY + 8, player.posZ + 30)).size();
+			if(villagerCount > 3) {
+				if(night) {
+					String[] songs = getSongsForEvent(EVENT_VILLAGE_NIGHT);
+					if(songs != null)
+						return songs;
+				}
+
+				String[] songs = getSongsForEvent(EVENT_VILLAGE);
+				if(songs != null)
+					return songs;
+			}
+
 			if(underground) {
 				if(pos.getY() < 20) {
 		        	String[] songs = getSongsForEvent(EVENT_DEEP_UNDEGROUND);
@@ -218,13 +262,21 @@ public final class SongPicker {
 		        	if(songs != null)
 		        		return songs;
 		        }
-			} else if(world.isRaining()) {
+			}
+
+			if(pos.getY() < 0) {
+				String[] songs = getSongsForEvent(EVENT_VOID);
+				if(songs != null)
+					return songs;
+			}
+
+			if(world.isRaining()) {
 	        	String[] songs = getSongsForEvent(EVENT_RAIN);
 	        	if(songs != null)
 	        		return songs;
 			}
 			
-			if(pos.getY() > 128) {
+			if(pos.getY() > 196) {
 	        	String[] songs = getSongsForEvent(EVENT_HIGH_UP);
 	        	if(songs != null)
 	        		return songs;
@@ -235,19 +287,6 @@ public final class SongPicker {
 	        	if(songs != null)
 	        		return songs;
 	        }
-		}
-		
-		int villagerCount = world.getEntitiesWithinAABB(EntityVillager.class, new AxisAlignedBB(player.posX - 30, player.posY - 8, player.posZ - 30, player.posX + 30, player.posY + 8, player.posZ + 30)).size();
-		if(villagerCount > 3) {
-			if(night) {
-				String[] songs = getSongsForEvent(EVENT_VILLAGE_NIGHT);
-	        	if(songs != null)
-	        		return songs;
-			}
-			
-        	String[] songs = getSongsForEvent(EVENT_VILLAGE);
-        	if(songs != null)
-        		return songs;
 		}
 		
 		event = new AmbienceEventEvent.Post(world, pos);

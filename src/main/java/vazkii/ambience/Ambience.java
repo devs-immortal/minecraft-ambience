@@ -28,9 +28,9 @@ public class Ambience {
 	public static final String VERSION = "GRADLE:VERSION-" + BUILD;
 	public static final String DEPENDENCIES = "";
 
-	private static final int WAIT_DURATION = 40;
-	public static final int FADE_DURATION = 40;
-	public static final int SILENCE_DURATION = 20;
+	private static final int WAIT_DURATION = 120;
+	public static final int FADE_DURATION = 120;
+	public static final int SILENCE_DURATION = 120;
 
 	public static final String[] OBF_MC_MUSIC_TICKER = { "aM", "field_147126_aw", "mcMusicTicker" };
 	public static final String[] OBF_MAP_BOSS_INFOS = { "g", "field_184060_g", "mapBossInfos" };
@@ -38,12 +38,15 @@ public class Ambience {
 	public static PlayerThread thread;
 	
 	String currentSong;
-	String nextSong;
+	public static volatile String nextSong;
 	int waitTick = WAIT_DURATION;
 	int fadeOutTicks = FADE_DURATION;
 	int fadeInTicks = 0;
 	int silenceTicks = 0;
-	
+
+	public static volatile boolean fading = false;
+	public static volatile boolean starting = false;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		if (FMLCommonHandler.instance().getEffectiveSide().isServer()) return;

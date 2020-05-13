@@ -8,11 +8,13 @@ import net.minecraft.util.SoundCategory;
 import vazkii.ambience.thirdparty.javazoom.jl.player.AudioDevice;
 import vazkii.ambience.thirdparty.javazoom.jl.player.JavaSoundAudioDevice;
 import vazkii.ambience.thirdparty.javazoom.jl.player.advanced.AdvancedPlayer;
+import static vazkii.ambience.Ambience.*;
 
 public class PlayerThread extends Thread {
 
-	public static final float MIN_GAIN = -50F;
-	public static final float MAX_GAIN = 0F;
+	public static float MIN_GAIN = -50F;
+	public static final float ORIGINAL_MIN = -50F;
+	public static final float MAX_GAIN = 10F;
 
 	public static float[] fadeGains;
 	
@@ -26,11 +28,13 @@ public class PlayerThread extends Thread {
 	
 	public volatile static float gain = MAX_GAIN;
 	public volatile static float realGain = 0;
+	public final static float realGainPin = 0;
+	public volatile static float realGainHolder = 0;
 
 	public volatile static String currentSong = null;
 	public volatile static String currentSongChoices = null;
 	
-	AdvancedPlayer player;
+	public static AdvancedPlayer player;
 
 	volatile boolean queued = false;
 
@@ -55,12 +59,13 @@ public class PlayerThread extends Thread {
 						continue;
 					
 					player = new AdvancedPlayer(stream);
+					setGain(fadeGains[0]);
+					starting = true;
 					queued = false;
 				}
 
 				boolean played = false;
 				if(player != null && player.getAudioDevice() != null && realGain > MIN_GAIN) {
-					setGain(fadeGains[0]);
 					player.play();
 					playing = true;
 					played = true;
@@ -121,14 +126,30 @@ public class PlayerThread extends Thread {
 	}
 	
 	public void setGain(float gain) {
-		this.gain = Math.min(MAX_GAIN, Math.max(MIN_GAIN, gain));
+		this.gain = gain;
 
 		if(player == null)
 			return;
 		
 		setRealGain();
 	}
-	
+
+	public void fadeStep(float gain){
+		float realGain = getGain() + gain;
+
+		this.realGainHolder = realGain;
+		this.realGain = realGain;
+		if(player != null) {
+			AudioDevice device = player.getAudioDevice();
+			if (device != null && device instanceof JavaSoundAudioDevice) {
+				try {
+					((JavaSoundAudioDevice) device).setGain(realGain);
+				} catch (IllegalArgumentException e) {
+				} // If you can't fix the bug just put a catch around it
+			}
+		}
+	}
+
 	public void setRealGain() {
 		GameSettings settings = Minecraft.getMinecraft().gameSettings;
 		float musicGain = settings.getSoundLevel(SoundCategory.MUSIC) * settings.getSoundLevel(SoundCategory.MASTER);
