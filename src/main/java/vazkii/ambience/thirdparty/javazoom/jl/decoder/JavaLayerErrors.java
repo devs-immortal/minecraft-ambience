@@ -1,6 +1,6 @@
 /*
- * 11/19/04		1.0 moved to LGPL.
- * 12/12/99		Initial version.	mdm@techie.com
+ * 11/19/04        1.0 moved to LGPL.
+ * 12/12/99        Initial version.    mdm@techie.com
  *-----------------------------------------------------------------------
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as published
@@ -23,18 +23,17 @@ package vazkii.ambience.thirdparty.javazoom.jl.decoder;
 /**
  * Exception erorr codes for components of the JavaLayer API.
  */
-public interface JavaLayerErrors
-{
-	/**
-	 * The first bitstream error code. See the {@link DecoderErrors DecoderErrors}
-	 * interface for other bitstream error codes.
-	 */
-	static public final int BITSTREAM_ERROR = 0x100;
-
-	/**
-	 * The first decoder error code. See the {@link DecoderErrors DecoderErrors}
-	 * interface for other decoder error codes.
-	 */
-	static public final int DECODER_ERROR = 0x200;
-
+public interface JavaLayerErrors{
+    /**
+     * The first bitstream error code. See the {@link DecoderErrors DecoderErrors}
+     * interface for other bitstream error codes.
+     */
+    int BITSTREAM_ERROR = 0x100;
+    
+    /**
+     * The first decoder error code. See the {@link DecoderErrors DecoderErrors}
+     * interface for other decoder error codes.
+     */
+    int DECODER_ERROR = 0x200;
+    
 }

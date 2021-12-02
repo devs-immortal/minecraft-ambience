@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "vazkii.ambience.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "client": [
+    "BossBarHudAccessor",
+    "MinecraftClientMixin",
+    "SoundSystemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

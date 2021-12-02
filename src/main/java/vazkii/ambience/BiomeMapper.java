@@ -1,32 +1,27 @@
 package vazkii.ambience;
 
-import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-import net.minecraft.util.ResourceLocation;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
+import org.jetbrains.annotations.Nullable;
 
-public class BiomeMapper {
-	
-	private static Map<String, Biome> biomeMap = null;
-	
-	public static void applyMappings() {
-		biomeMap = new HashMap<String, Biome>();
-		for(ResourceLocation biomeResource : Biome.REGISTRY.getKeys()) {
-			Biome biome = Biome.REGISTRY.getObject(biomeResource);
-			biomeMap.put(biome.getBiomeName(), biome);
-		}
-	}
-	
-	public static Biome getBiome(String s) {
-		if(biomeMap == null)
-			applyMappings();
-		return biomeMap.get(s);
-	}
-	
-	public static Type getBiomeType(String s) {
-		return BiomeDictionary.Type.getType(s);
-	}
-	
+public final class BiomeMapper{
+    
+    public static Biome getBiome(String s){
+        return MinecraftClient.getInstance().world.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(s));
+    }
+    
+    private static final Map<String, Biome.Category> CATEGORY_MAP = Stream.of(Biome.Category.values())
+        .collect(Collectors.toUnmodifiableMap(Biome.Category::asString, Function.identity()));
+    
+    public static @Nullable Biome.Category getBiomeType(String s){
+        return CATEGORY_MAP.get(s.toLowerCase(Locale.ROOT));
+    }
+    
 }
